@@ -216,9 +216,9 @@ batwidget = lain.widgets.bat({
 
 -- Weather
 weathericon = wibox.widget.imagebox(beautiful.widget_weather)
-yawn = lain.widgets.yawn(123456, {
+yawn = lain.widgets.yawn(12778107, {
     settings = function()
-        widget:set_markup(markup("#eca4c4", forecast:lower() .. " @ " .. units .. "°C "))
+        widget:set_markup(markup("#eca4c4", forecast:lower() .. " @ " .. units .. "°F "))
     end
 })
 
