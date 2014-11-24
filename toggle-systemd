@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+active=`systemctl is-active $1 |grep 'active' &> /dev/null`
+if [ $? == 0 ]; then
+  sudo systemctl stop $1
+else
+  sudo systemctl start $1
+fi

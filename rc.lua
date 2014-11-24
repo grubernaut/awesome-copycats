@@ -74,6 +74,9 @@ graphics   = "gimp"
 mail       = terminal .. " -e mutt "
 iptraf     = terminal .. " -g 180x54-20+34 -e sudo iptraf-ng -i all "
 musicplr   = terminal .. " -g 130x34-320+16 -e ncmpcpp "
+bidatavpn = "toggle-systemd openvpn@bidata.service"
+officevpn = "toggle-systemd openvpn@office.service"
+raxvpn = "toggle-systemd vpnc@rax.service"
 
 local layouts = {
     awful.layout.suit.floating,
@@ -249,22 +252,6 @@ volmargin:set_bottom(6)
 volumewidget = wibox.widget.background(volmargin)
 volumewidget:set_bgimage(beautiful.widget_bg)
 
--- volumewidget = lain.widgets.alsabar({
---     settings = function()
---         if volume_now.status == "off" then
---             volicon:set_image(beautiful.widget_vol_mute)
---         elseif tonumber(volume_now.level) == 0 then
---             volicon:set_image(beautiful.widget_vol_no)
---         elseif tonumber(volume_now.level) <= 50 then
---             volicon:set_image(beautiful.widget_vol_low)
---         else
---             volicon:set_image(beautiful.widget_vol)
---         end
---
---         widget:set_text(" " .. volume_now.level .. "% ")
---     end
--- })
-
 -- Net
 neticon = wibox.widget.imagebox(beautiful.widget_net)
 neticon:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(iptraf) end)))
@@ -275,6 +262,72 @@ netwidget = wibox.widget.background(lain.widgets.net({
                           markup("#46A8C3", " " .. net_now.sent .. " "))
     end
 }), "#313131")
+
+-- BiData VPN - OpenVPN
+bidatavpnwidget_text = wibox.widget.textbox()
+bidatavpnwidget_text:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(bidatavpn) end)))
+bidatavpnwidget_text:set_text(" VPN: N ")
+bidatavpnwidgettimer = timer({ timeout = 5 })
+bidatavpnwidgettimer:connect_signal("timeout",
+function()
+  -- Check for openvpn@bidata.service
+  status = io.popen("systemctl is-active openvpn@bidata.service", "r")
+  if status:read() == "active" then
+    bidatavpnwidget_text:set_markup(" <span color='#00FF00'>B</span> ")
+  else
+    bidatavpnwidget_text:set_markup(" <span color='#FF0000'>B</span> ")
+  end
+  status:close()
+end
+)
+bidatavpnwidgettimer:start()
+bidatavpnwidget = wibox.widget.background()
+bidatavpnwidget:set_widget(bidatavpnwidget_text)
+bidatavpnwidget:set_bg("#313131")
+
+-- Office VPN - OpenVPN
+officevpnwidget_text = wibox.widget.textbox()
+officevpnwidget_text:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(officevpn) end)))
+officevpnwidget_text:set_text(" VPN: N ")
+officevpnwidgettimer = timer({ timeout = 5 })
+officevpnwidgettimer:connect_signal("timeout",
+function()
+  -- Check Office VPN
+  status = io.popen("systemctl is-active openvpn@office.service", "r")
+  if status:read() == "active" then
+    officevpnwidget_text:set_markup(" <span color='#00FF00'>O</span> ")
+  else
+    officevpnwidget_text:set_markup(" <span color='#FF0000'>O</span> ")
+  end
+  status:close()
+end
+)
+officevpnwidgettimer:start()
+officevpnwidget = wibox.widget.background()
+officevpnwidget:set_widget(officevpnwidget_text)
+officevpnwidget:set_bg("#313131")
+
+-- Check Cisco IPSec VPN
+ciscovpnwidget_text = wibox.widget.textbox()
+ciscovpnwidget_text:set_text(" VPN: N ")
+ciscovpnwidgettimer = timer({ timeout = 5 })
+ciscovpnwidgettimer:connect_signal("timeout",
+function()
+  -- Check cisco VPN
+  status = io.popen("systemctl is-active vpnc@rax.service", "r")
+  if status:read() == "active" then
+    ciscovpnwidget_text:set_markup(" <span color='#00FF00'>R</span> ")
+  else
+    ciscovpnwidget_text:set_markup(" <span color='#FF0000'>R</span> ")
+  end
+  status:close()
+end
+)
+ciscovpnwidgettimer:start()
+ciscovpnwidget = wibox.widget.background()
+ciscovpnwidget_text:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(raxvpn) end)))
+ciscovpnwidget:set_widget(ciscovpnwidget_text)
+ciscovpnwidget:set_bg("#313131")
 
 -- Separators
 spr = wibox.widget.textbox(' ')
@@ -395,6 +448,9 @@ for s = 1, screen.count() do
     right_layout:add(yawn.widget)
     right_layout:add(arrl_ld)
     right_layout:add(neticon)
+    right_layout:add(bidatavpnwidget)
+    right_layout:add(officevpnwidget)
+    right_layout:add(ciscovpnwidget)
     right_layout:add(netwidget)
     right_layout:add(arrl_dl)
     right_layout:add(mytextclock)

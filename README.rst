@@ -2,6 +2,11 @@
 Awesome WM Copycats
 ===================
 
+** Customized Notes **
+mv toggle-systemd to /usr/local/bin, or someplace in your path
+
+
+
 --------------------------------
 Power themes for Awesome WM 3.5+
 --------------------------------
