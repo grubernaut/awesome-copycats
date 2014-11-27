@@ -480,7 +480,7 @@ root.buttons(awful.util.table.join(
 globalkeys = awful.util.table.join(
     -- Take a screenshot
     -- https://github.com/copycat-killer/dots/blob/master/bin/screenshot
-    awful.key({ altkey }, "p", function() os.execute("screenshot") end),
+    awful.key({ altkey }, "p", function() os.execute("scrot ~/docs/pictures/%T-shot.png") end),
 
     -- Tag browsing
     awful.key({ modkey }, "Left",   awful.tag.viewprev       ),
@@ -572,47 +572,35 @@ globalkeys = awful.util.table.join(
     awful.key({ altkey,           }, "h",      function () fswidget.show(7) end),
 
     -- ALSA volume control
-    awful.key({ altkey }, "Up",
+    awful.key({ }, "F12",
         function ()
-            awful.util.spawn("amixer -q set Master 1%+")
-            volumewidget.update()
+            awful.util.spawn("amixer -q set Master 5%+")
         end),
-    awful.key({ altkey }, "Down",
+    awful.key({ }, "F11",
         function ()
-            awful.util.spawn("amixer -q set Master 1%-")
-            volumewidget.update()
+            awful.util.spawn("amixer -q set Master 5%-")
         end),
-    awful.key({ altkey }, "m",
+    awful.key({ }, "F10",
         function ()
             awful.util.spawn("amixer -q set Master playback toggle")
-            volumewidget.update()
         end),
-    awful.key({ altkey, "Control" }, "m",
+    awful.key({ }, "F9",
         function ()
             awful.util.spawn("amixer -q set Master playback 100%")
-            volumewidget.update()
         end),
 
-    -- MPD control
-    awful.key({ altkey, "Control" }, "Up",
+    -- Spotify control
+    awful.key({ }, "F7",
         function ()
-            awful.util.spawn_with_shell("mpc toggle || ncmpc toggle || pms toggle")
-            mpdwidget.update()
+	awful.util.spawn("dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause")
         end),
-    awful.key({ altkey, "Control" }, "Down",
+    awful.key({ }, "F8",
         function ()
-            awful.util.spawn_with_shell("mpc stop || ncmpc stop || pms stop")
-            mpdwidget.update()
+	awful.util.spawn("dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next")
         end),
-    awful.key({ altkey, "Control" }, "Left",
+    awful.key({ }, "F6",
         function ()
-            awful.util.spawn_with_shell("mpc prev || ncmpc prev || pms prev")
-            mpdwidget.update()
-        end),
-    awful.key({ altkey, "Control" }, "Right",
-        function ()
-            awful.util.spawn_with_shell("mpc next || ncmpc next || pms next")
-            mpdwidget.update()
+	awful.util.spawn("dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous")
         end),
 
     -- Copy to clipboard
