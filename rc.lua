@@ -73,7 +73,6 @@ graphics   = "gimp"
 mail       = terminal .. " -e mutt "
 iptraf     = terminal .. "-g 180x54-20+34 -e sudo iptraf-ng -i all"
 bidatavpn  = "toggle-systemd openvpn@bidata.service"
-officevpn = "toggle-systemd openvpn@office.service"
 raxvpn = "toggle-systemd vpnc@rax.service"
 
 local layouts = {
@@ -270,28 +269,6 @@ bidatavpnwidget = wibox.widget.background()
 bidatavpnwidget:set_widget(bidatavpnwidget_text)
 bidatavpnwidget:set_bg("#313131")
 
--- Office VPN - OpenVPN
-officevpnwidget_text = wibox.widget.textbox()
-officevpnwidget_text:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(officevpn) end)))
-officevpnwidget_text:set_text(" VPN: N ")
-officevpnwidgettimer = timer({ timeout = 5 })
-officevpnwidgettimer:connect_signal("timeout",
-function()
-  -- Check Office VPN
-  status = io.popen("systemctl is-active openvpn@office.service", "r")
-  if status:read() == "active" then
-    officevpnwidget_text:set_markup(" <span color='#00FF00'>O</span> ")
-  else
-    officevpnwidget_text:set_markup(" <span color='#FF0000'>O</span> ")
-  end
-  status:close()
-end
-)
-officevpnwidgettimer:start()
-officevpnwidget = wibox.widget.background()
-officevpnwidget:set_widget(officevpnwidget_text)
-officevpnwidget:set_bg("#313131")
-
 -- Check Cisco IPSec VPN
 ciscovpnwidget_text = wibox.widget.textbox()
 ciscovpnwidget_text:set_text(" VPN: N ")
@@ -411,7 +388,6 @@ for s = 1, screen.count() do
     right_layout:add(netupicon)
     right_layout:add(netupinfo)
     right_layout:add(bidatavpnwidget)
-    right_layout:add(officevpnwidget)
     right_layout:add(ciscovpnwidget)
     right_layout:add(volicon)
     right_layout:add(volumewidget)
@@ -425,8 +401,8 @@ for s = 1, screen.count() do
     right_layout:add(yawn.widget)
     right_layout:add(tempicon)
     right_layout:add(tempwidget)
---    right_layout:add(baticon)
---    right_layout:add(batwidget)
+    right_layout:add(baticon)
+    right_layout:add(batwidget)
     right_layout:add(clockicon)
     right_layout:add(mytextclock)
 
