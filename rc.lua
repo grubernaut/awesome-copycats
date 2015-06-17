@@ -573,6 +573,12 @@ globalkeys = awful.util.table.join(
         end),
 
 
+    -- Brightness Control
+    awful.key({ }, "XF86MonBrightnessDown", function ()
+          awful.util.spawn("xbacklight -dec 15") end),
+    awful.key({ }, "XF86MonBrightnessUp", function ()
+          awful.util.spawn("xbacklight -inc 15") end),
+
     -- Copy to clipboard
     awful.key({ modkey }, "c", function () os.execute("xsel -p -o | xsel -i -b") end),
 
